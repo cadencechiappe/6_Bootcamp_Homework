@@ -57,6 +57,15 @@ input {
     background-color: rgb(73, 147, 222);
 }
 
+.submit-container {
+    border-bottom: 1px;
+    border-style: solid;
+    border-color: black;
+    border-left: none;
+    border-right: none;
+    border-top: none;
+}
+
 .location-btns {
     display: block;
     background-color: rgb(183, 179, 179);
@@ -88,6 +97,7 @@ main {
 
 .fivedf {
     text-align: left;
+    padding-bottom: 10px;
 }
 
 .forecast-card {

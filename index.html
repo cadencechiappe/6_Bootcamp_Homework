@@ -1,1 +1,54 @@
-html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Homework 6</title>
+  <link rel="stylesheet" href="./assets/style.css" />
+</head>
+
+<header class="header">
+  <h1>Weather Dashboard</h1>
+</header>
+
+<body>
+  <div class="sidenav">
+    <h2>Search for a City:</h2>
+    <input type="text" id="cityInput" name="city-input" placeholder="Austin">
+    <div class="submit-container">
+        <button class="btn submit-btn"id="submitBtn" >Submit</button>
+    </div>
+    <div id="locationBtns">
+        <button class="btn location-btns">Austin</button>
+        <button class="btn location-btns">Seattle</button>
+        <button class="btn location-btns">New York City</button>
+        <button class="btn location-btns">Los Angeles</button>
+        <button class="btn location-btns">Denver</button>
+    </div>
+  </div>
+  
+  <main>
+    <div class="citydiv">
+        <h2>City Date</h2>
+        <p>Temp:</p>
+        <p>Wind:</p>
+        <p>Humidity:</p>
+        <p>UV Index:</p>
+    </div>
+    <div class="five-day-for-div" id="fiveDayForDiv">
+        <h2 class="fivedf">5 Day Forecast:</h2>
+      <div class="forecast-card" id="forcastCard">
+          <h3>Date</h3>
+          <p>icon</p>
+          <p>Temp:</p>
+          <p>Wind:</p>
+          <p>Humidity:</p>
+      </div>
+    </div>
+  </main>
+</body>
+
+<script src="./assets/script.js"></script>
+
+</html>

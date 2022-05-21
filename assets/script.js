@@ -6,11 +6,12 @@ let locationInput = document.getElementById('cityInput')
 localStorage.getItem ('cityInput')
 
 var weatherURL = "https://api.openweathermap.org/data/2.5/weather?q="
+var forecastURL = "https://api.openweathermap.org/data/2.5/forecast?q="
 
 //API key for weather
 var apiKey = "126e4065d97fedad97742cdb5c363ca9"
 
-// weather API function
+// daily weather API function
 function fetchWeatherData () { //retrieves user input and attaches it to url as a query string
     var locationInputWeather = document.getElementById('cityInput').value 
     var locationURLWeather = weatherURL.concat(locationInputWeather) + "&Appid=" + apiKey + "&units=imperial"
@@ -18,7 +19,7 @@ function fetchWeatherData () { //retrieves user input and attaches it to url as 
   fetch(locationURLWeather) // fetches data from API
   .then(res => res.json())
   .then(function (data){
-    var forecast = data.main
+    var daily = data.main
     var icon = data.weather[0].icon
     var wind = data.wind
 
@@ -40,10 +41,10 @@ function fetchWeatherData () { //retrieves user input and attaches it to url as 
     weatherIcon.setAttribute("src" , iconimport+".png")
     weatherIcon.classList.add("weather-icon");
 
-    weatherCurrentTemp.textContent = "Current Temp: " + forecast.temp
+    weatherCurrentTemp.textContent = "Temp: " + daily.temp
     weatherWind.textContent = "Wind: " + wind.speed + " mph"
-    weatherHumidity.textContent = "Humidity: " + forecast.humidity
-    weatherUV.textContent = "UV Index: " + forecast.uvindex
+    weatherHumidity.textContent = "Humidity: " + daily.humidity
+    weatherUV.textContent = "UV Index: " + daily.uvindex
     weatherUV.classList.add("uv-index")
 
     dayContainer.append(locationInputTitle, weatherDate, weatherIcon, weatherCurrentTemp, weatherWind, weatherHumidity, weatherUV)
@@ -52,4 +53,43 @@ function fetchWeatherData () { //retrieves user input and attaches it to url as 
   })
 };
 
+// forecast weather API function
+function fetchForecastData () { 
+    var locationInputWeather = document.getElementById('cityInput').value 
+    var locationURLForecast = forecastURL.concat(locationInputWeather) + "&Appid=" + apiKey + "&units=imperial"
+    window.localStorage.setItem('location', locationInputWeather)
+  fetch(locationURLForecast)
+  .then(res => res.json())
+  .then(function (forecast){
+    var forecastTemp = forecast.temperature
+    var iconFor = forecast.symbol
+    var iconName = iconFor.icon
+    var windFor = forecast.windSpeed
+
+    console.log(locationURLForecast)
+
+    var forecastDate = document.createElement('h3')
+    var forecastIcon = document.createElement('img')
+    var forecastCurrentTemp = document.createElement('p')
+    var forecastWind = document.createElement('p')
+    var forecastHumidity = document.createElement('p')
+      
+    forecastDate.textContent = moment().format("dddd, MMMM Do")
+
+    var iconURL = "https://openweathermap.org/img/wn/"
+    iconimport = iconURL.concat(iconName)
+    forecastIcon.setAttribute("src" , iconimport+".png")
+
+    forecastCurrentTemp.textContent = "Temp: " + forecastTemp.value
+    forecastWind.textContent = "Wind: " + windFor.speed + " mph"
+    forecastHumidity.textContent = "Humidity: " + forecast.humidity
+
+    forecastContainer.append(forecastDate, forecastIcon, forecastCurrentTemp, forecastWind, forecastHumidity)
+    forecastContainer.append(forecastIcon)
+  
+  })
+};
+
+
 submitBtn.addEventListener("click", fetchWeatherData);
+submitBtn.addEventListener("click", fetchForecastData);

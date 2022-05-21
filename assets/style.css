@@ -89,6 +89,21 @@ main {
 
 .citydiv h2 {
     text-align: left;
+    font-size: 20px;
+    display: inline;
+    padding-right: 10px;
+}
+
+.uv-index {
+    background-color: rgb(112, 204, 112);
+    border-radius: 5px;
+    width: 150px;
+}
+
+.weather-icon {
+    position:fixed;
+    right: 625px;
+    top: 160px;
 }
 
 .five-day-for-div {

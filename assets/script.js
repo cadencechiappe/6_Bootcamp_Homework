@@ -2,8 +2,8 @@ var dayContainer = document.getElementById('cityContainer')
 var forecastContainer = document.getElementById('forecastCard')
 var submitBtn = document.getElementById("submitBtn");
 let locationInput = document.getElementById('cityInput')
+let searchHistory = JSON.parse(localStorage.getItem('cityInput'))
 
-localStorage.getItem ('cityInput')
 
 var weatherURL = "https://api.openweathermap.org/data/2.5/weather?q="
 var forecastURL = "https://api.openweathermap.org/data/2.5/forecast?q="
@@ -29,7 +29,6 @@ function fetchWeatherData () { //retrieves user input and attaches it to url as 
     var weatherCurrentTemp = document.createElement('p')
     var weatherWind = document.createElement('p')
     var weatherHumidity = document.createElement('p')
-    var weatherUV = document.createElement('p')
       
     weatherDate.textContent = moment().format("dddd, MMMM Do")
     weatherDate.classList.add("current-weather-date")
@@ -44,52 +43,71 @@ function fetchWeatherData () { //retrieves user input and attaches it to url as 
     weatherCurrentTemp.textContent = "Temp: " + daily.temp
     weatherWind.textContent = "Wind: " + wind.speed + " mph"
     weatherHumidity.textContent = "Humidity: " + daily.humidity
-    weatherUV.textContent = "UV Index: " + daily.uvindex
-    weatherUV.classList.add("uv-index")
 
-    dayContainer.append(locationInputTitle, weatherDate, weatherIcon, weatherCurrentTemp, weatherWind, weatherHumidity, weatherUV)
+    dayContainer.append(locationInputTitle, weatherDate, weatherIcon, weatherCurrentTemp, weatherWind, weatherHumidity)
     dayContainer.append(weatherIcon)
   
+    var lat = data.coord.lat;
+    var lon = data.coord.lon;
+    var UVindexURL = `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&exclude=hourly,daily&appid=${apiKey}`
+    fetch(UVindexURL)
+    .then(res => res.json())
+    .then(function(data){
+        var UVIndex = document.createElement("p");
+        UVIndex.classList.add("uv-index");
+        var uviFirstEl = data.current;
+        UVIndex.textContent = "UV Index: " + data.current.uvi;
+        dayContainer.append(UVIndex);
+    });
   })
 };
+
+var locationInputForecast = document.getElementById('cityInput').value 
 
 // forecast weather API function
 function fetchForecastData () { 
-    var locationInputWeather = document.getElementById('cityInput').value 
-    var locationURLForecast = forecastURL.concat(locationInputWeather) + "&Appid=" + apiKey + "&units=imperial"
-    window.localStorage.setItem('location', locationInputWeather)
+    var locationInputForecast = document.getElementById('cityInput').value 
+    var locationURLForecast = "https://api.openweathermap.org/data/2.5/forecast?q=" + locationInputForecast + "&Appid=" + apiKey + "&units=imperial"
+    // window.localStorage.setItem('location', locationInputForecast)
   fetch(locationURLForecast)
   .then(res => res.json())
-  .then(function (forecast){
-    var forecastTemp = forecast.temperature
-    var iconFor = forecast.symbol
-    var iconName = iconFor.icon
-    var windFor = forecast.windSpeed
-
+  .then(function (data){
+    var forecast = data.list
     console.log(locationURLForecast)
 
-    var forecastDate = document.createElement('h3')
-    var forecastIcon = document.createElement('img')
-    var forecastCurrentTemp = document.createElement('p')
-    var forecastWind = document.createElement('p')
-    var forecastHumidity = document.createElement('p')
-      
-    forecastDate.textContent = moment().format("dddd, MMMM Do")
+    for (var i = 7; i < forecast.length; i++) {
+        
+        // Date
+        var forecastDate = document.createElement('h3')
+        var fcDate = new Date(forecast[i].dt_txt)
+        var month = fcDate.getMonth()
+        var day = fcDate.getDate()
+        var year = fcDate.getFullYear()
+        forecastDate.textContent = month + "/" + day + "/" + year 
 
-    var iconURL = "https://openweathermap.org/img/wn/"
-    iconimport = iconURL.concat(iconName)
-    forecastIcon.setAttribute("src" , iconimport+".png")
+        // Temp
+        var forecastTemp = document.createElement('p')
+        forecastTemp.textContent = "Temperature: " + forecast[i].main.temp + "° F"
 
-    forecastCurrentTemp.textContent = "Temp: " + forecastTemp.value
-    forecastWind.textContent = "Wind: " + windFor.speed + " mph"
-    forecastHumidity.textContent = "Humidity: " + forecast.humidity
+        // Wind speed
+        var forecastWind = document.createElement('p')
+        forecastWind.textContent = "Wind: " + forecast[i].wind.speed + " MPH"
 
-    forecastContainer.append(forecastDate, forecastIcon, forecastCurrentTemp, forecastWind, forecastHumidity)
-    forecastContainer.append(forecastIcon)
-  
+        // Humidity
+        var forecastHumidity = document.createElement('p')
+        forecastHumidity.textContent = "Humidity: " + forecast[i].main.humidity + "%"
+
+        // Weather icons
+        var forecastIcon = document.createElement("img")
+        var iconURL = "https://openweathermap.org/img/wn/"
+        var icon = forecast[i].weather[0].icon
+        var iconImport = iconURL.concat(icon)
+        forecastIcon.setAttribute("src", iconImport + ".png" );
+        
+    //    forecastContainer.appendChild(forecastDate, forecastTemp, forecastWind, forecastHumidity,forecastIcon);
+    }
   })
 };
-
 
 submitBtn.addEventListener("click", fetchWeatherData);
 submitBtn.addEventListener("click", fetchForecastData);
